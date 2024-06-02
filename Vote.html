@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .nominee {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+        }
+        .nominee img {
+            max-width: 100px;
+            border-radius: 50%;
+        }
+        .nominee button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .nominee button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Voting Page</h1>
+    <div id="nominees"></div>
+    <button onclick="restartVoting()">Restart Voting</button>
+    <button onclick="goToCountingPage()">Go to Counting Page</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadNominees);
+
+        function loadNominees() {
+            const nominees = JSON.parse(localStorage.getItem('nominees')) || [];
+            const votes = JSON.parse(localStorage.getItem('votes')) || {};
+            const nomineesDiv = document.getElementById('nominees');
+
+            nominees.forEach((nominee, index) => {
+                const nomineeDiv = document.createElement('div');
+                nomineeDiv.className = 'nominee';
+
+                const photo = document.createElement('img');
+                photo.src = nominee.photo;
+                nomineeDiv.appendChild(photo);
+
+                const name = document.createElement('p');
+                name.innerText = `Name: ${nominee.name}`;
+                nomineeDiv.appendChild(name);
+
+                const number = document.createElement('p');
+                number.innerText = `Number: ${nominee.number}`;
+                nomineeDiv.appendChild(number);
+
+                const className = document.createElement('p');
+                className.innerText = `Class: ${nominee.className}`;
+                nomineeDiv.appendChild(className);
+
+                const popupPhoto = document.createElement('img');
+                popupPhoto.src = nominee.popupPhoto;
+                popupPhoto.style.display = 'none'; // Hide the popup photo initially
+                nomineeDiv.appendChild(popupPhoto);
+
+                const voteButton = document.createElement('button');
+                voteButton.innerText = 'Vote';
+                voteButton.onclick = () => castVote(index, nomineeDiv);
+                nomineeDiv.appendChild(voteButton);
+
+                nomineesDiv.appendChild(nomineeDiv);
+            });
+        }
+
+        function castVote(index, nomineeDiv) {
+            let votes = JSON.parse(localStorage.getItem('votes')) || {};
+            votes[index] = (votes[index] || 0) + 1;
+            localStorage.setItem('votes', JSON.stringify(votes));
+
+            // Show the popup photo on vote
+            const popupPhoto = nomineeDiv.querySelector('img:last-child');
+            popupPhoto.style.display = 'block';
+
+            alert('Vote casted successfully!');
+        }
+
+        function restartVoting() {
+            localStorage.removeItem('votes');
+            alert('Voting has been restarted!');
+            // Reload the page to reset the nominee display
+            window.location.reload();
+        }
+
+        function goToCountingPage() {
+            window.location.href = 'counting.html';
+        }
+    </script>
+</body>
+</html>

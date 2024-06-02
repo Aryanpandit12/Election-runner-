@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Vote Counting</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .count {
+            font-size: 2em;
+            margin: 20px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .count img {
+            max-width: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .vote-count {
+            font-size: 2.5em;
+            color: #e62117;
+        }
+    </style>
+</head>
+<body>
+    <h1>Live Vote Counting</h1>
+    <div id="liveCounting"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', updateCounts);
+
+        function updateCounts() {
+            const nominees = JSON.parse(localStorage.getItem('nominees')) || [];
+            const votes = JSON.parse(localStorage.getItem('votes')) || {};
+            const liveCounting = document.getElementById('liveCounting');
+            liveCounting.innerHTML = ''; // Clear previous content
+
+            nominees.forEach((nominee, index) => {
+                const countDiv = document.createElement('div');
+                countDiv.className = 'count';
+                countDiv.innerHTML = `
+                    <img src="${nominee.photo}" alt="${nominee.name}">
+                    <div class="vote-count">${votes[index] || 0}</div>
+                `;
+                liveCounting.appendChild(countDiv);
+            });
+        }
+
+        setInterval(updateCounts, 1000); // Refresh the counts every second
+    </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Nominee</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 1em;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add Nominee</h1>
+    <form id="nomineeForm">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="text" id="number" placeholder="Number" required>
+        <input type="text" id="className" placeholder="Class" required>
+        <input type="file" id="photo" accept="image/*" required>
+        <input type="file" id="popupPhoto" accept="image/*" required>
+        <button type="submit">Add Nominee</button>
+    </form>
+    <button onclick="resetNominees()">Reset Nominees</button>
+    <button onclick="goToVotingPage()">Go to Voting Page</button>
+
+    <script>
+        document.getElementById('nomineeForm').addEventListener('submit', addNominee);
+
+        function addNominee(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const number = document.getElementById('number').value;
+            const className = document.getElementById('className').value;
+            const photo = document.getElementById('photo').files[0];
+            const popupPhoto = document.getElementById('popupPhoto').files[0];
+
+            if (!photo || !popupPhoto) {
+                alert('Please select both photos.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const photoDataUrl = event.target.result;
+                const nominee = {
+                    name: name,
+                    number: number,
+                    className: className,
+                    photo: photoDataUrl,
+                    popupPhoto: popupPhoto
+                };
+
+                let nominees = JSON.parse(localStorage.getItem('nominees')) || [];
+                nominees.push(nominee);
+                localStorage.setItem('nominees', JSON.stringify(nominees));
+
+                alert('Nominee added successfully!');
+                document.getElementById('nomineeForm').reset();
+            };
+
+            reader.readAsDataURL(photo);
+        }
+
+        function resetNominees() {
+            localStorage.removeItem('nominees');
+            alert('All nominees have been reset!');
+        }
+
+        function goToVotingPage() {
+            window.location.href = 'voting.html';
+        }
+    </script>
+</body>
+</html>
